@@ -1,0 +1,143 @@
+# Huffman Coding in python
+
+string = 'BCAADDDCCACACAC'
+
+# Creating tree nodes
+class NodeTree(object):
+
+    def __init__(self, left=None, right=None):
+        self.left = left
+        self.right = right
+
+    def children(self):
+        return (self.left, self.right)
+
+    def nodes(self):
+        return (self.left, self.right)
+
+    def __str__(self):
+        return '%s_%s' % (self.left, self.right)
+
+
+# Main function implementing huffman coding
+def huffman_code_tree(node, left=True, binString=''):
+    if type(node) is str:
+        return {node: binString}
+    (l, r) = node.children()
+    d = dict()
+    d.update(huffman_code_tree(l, True, binString + '0'))
+    d.update(huffman_code_tree(r, False, binString + '1'))
+    return d
+
+# Calculating frequency
+freq = {}
+for c in string:
+    if c in freq:
+        freq[c] += 1
+    else:
+        freq[c] = 1
+
+freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+
+nodes = freq
+
+while len(nodes) > 1:
+    (key1, c1) = nodes[-1]
+    (key2, c2) = nodes[-2]
+    nodes = nodes[:-2]
+    node = NodeTree(key1, key2)
+    nodes.append((node, c1 + c2))
+
+    nodes = sorted(nodes, key=lambda x: x[1], reverse=True)
+
+huffmanCode = huffman_code_tree(nodes[0][0])
+
+print(' Char | Huffman code ')
+print('----------------------')
+for (char, frequency) in freq:
+    print(' %-4r |%12s' % (char, huffmanCode[char]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''Here’s a simple breakdown of the Huffman Coding code:'ABBCDBCCDAABBEEEBEAB'
+
+### 1. **Input String and Frequency Calculation**
+   - The input `string` is `'BCAADDDCCACACAC'`.
+   - We calculate the **frequency** of each character in the string. The result is stored in `freq`, a dictionary where the keys are characters, and the values are their frequencies.
+
+### 2. **NodeTree Class**
+   - This class represents nodes in the Huffman Tree.
+   - Each node has two attributes, `left` and `right`, which represent its children nodes.
+   - The `children` method returns the left and right nodes, allowing us to navigate the tree structure.
+
+### 3. **Building the Huffman Tree**
+   - We sort the characters by frequency in descending order and store them in `nodes`.
+   - We loop to combine nodes with the lowest frequencies:
+     - Pick the two nodes with the lowest frequencies.
+     - Create a new `NodeTree` with these two nodes as children.
+     - Insert the new node back into the list and sort by frequency again.
+   - This process continues until there’s only one node left, representing the root of the Huffman Tree.
+
+### 4. **Huffman Code Tree (Recursive)**
+   - The `huffman_code_tree` function assigns binary codes to each character:
+     - If `node` is a character (a leaf node), it assigns a binary string `binString` as the code for that character.
+     - For non-leaf nodes, it adds '0' to the binary string for the left child and '1' for the right child.
+   - It recursively builds a dictionary of characters and their Huffman codes.
+
+### 5. **Printing the Huffman Codes**
+   - The code prints each character along with its corresponding Huffman code.
+   - For example:
+     ```
+     Char | Huffman code 
+     ----------------------
+     'B'  |      01
+     'C'  |     001
+     ...
+     ```
+
+This code efficiently compresses data by assigning shorter binary codes to frequently occurring characters, reducing the overall size of the encoded data.
+
+
+
+
+**Huffman Encoding Complexity Analysis (Greedy Strategy):**
+
+- **Time Complexity**:
+  - **Frequency Calculation**: \(O(n)\), where \(n\) is the string length.
+  - **Building the Tree**: \(O(m \log m)\), with \(m\) being the number of unique characters.
+  - **Overall**: \(O(n + m \log m)\).
+
+- **Space Complexity**: \(O(m)\), for storing frequencies, priority queue, and the Huffman Tree.
+
+Huffman Encoding is a greedy algorithm because it makes a locally optimal choice at each step—by merging the two lowest-frequency nodes—expecting this will lead to a globally optimal solution. This strategy is efficient for minimizing the total encoded length of the characters, as the most frequent characters receive the shortest codes in the final Huffman Tree.
+The Greedy Method is an algorithmic approach that makes locally optimal choices at each step with the hope of finding the global optimum. It aims to solve problems by choosing the best option available at each step without reconsidering previous choices.
+
+
+
+
+
+
+
+### **Purpose of Huffman Coding**:
+Huffman coding is used for **lossless data compression**, aiming to reduce the size of data for efficient storage or transmission. It assigns shorter binary codes to more frequent characters and longer codes to less frequent characters, minimizing the total size of the encoded data.
+
+### **Basic Principles of Huffman Coding**:
+1. **Frequency Analysis**: Characters in the input data are assigned frequencies, and those that appear more frequently are assigned shorter codes.
+2. **Greedy Approach**: The algorithm repeatedly merges the two nodes with the lowest frequencies to build a binary tree.
+3. **Binary Tree**: The tree’s leaves represent characters, and the path from the root to a leaf node forms the Huffman code for that character.
+4. **Prefix Property**: The resulting codes are **prefix-free**, meaning no code is a prefix of another, which ensures unambiguous decoding.
+
+This method ensures optimal compression by minimizing the total number of bits needed to represent the input data.
+'''

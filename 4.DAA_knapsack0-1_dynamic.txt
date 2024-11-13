@@ -1,0 +1,193 @@
+def knapSack(W, wt, val): 
+    n=len(val)
+    table = [[0 for x in range(W + 1)] for x in range(n + 1)] 
+ 
+    for i in range(n + 1): 
+        for j in range(W + 1): 
+            if i == 0 or j == 0: 
+                table[i][j] = 0
+            elif wt[i-1] <= j: 
+                table[i][j] = max(val[i-1]  
++ table[i-1][j-wt[i-1]],  table[i-1][j]) 
+            else: 
+                table[i][j] = table[i-1][j] 
+   
+    return table[n][W] 
+ 
+val = [50,100,150,200]
+wt = [8,16,32,40]
+W = 64
+ 
+print(knapSack(W, wt, val))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''### Explanation of the **Knapsack Problem (0/1)** Code:
+
+This code solves the **0/1 Knapsack Problem** using **Dynamic Programming**. The goal is to determine the maximum value that can be carried in a knapsack of a given capacity, where each item has a weight and a value, and each item can either be taken fully or not at all.
+
+
+### **Input Variables**:
+- **W**: The **capacity** of the knapsack (maximum weight the knapsack can carry).
+- **wt**: A list representing the **weights** of the items.
+- **val**: A list representing the **values** of the items.
+
+### **Dynamic Programming Table** (`table`):
+- A 2D table `table[i][j]` is created to store the **maximum value** that can be obtained using the first `i` items and a knapsack with capacity `j`.
+- **Rows** represent the number of items considered (1 to `n`), and **columns** represent the possible capacities of the knapsack (0 to `W`).
+
+### **Steps in the Code**:
+1. **Initialization**:
+   - The table is initialized to all zeros. This represents the scenario where no items are considered, or the knapsack has a capacity of zero.
+
+2. **Filling the DP Table**:
+   - For each item (from 1 to `n`), and for each possible capacity (from 0 to `W`), the algorithm checks:
+     - If the item cannot be added (because its weight is greater than the current capacity), the value remains the same as the previous row (`table[i-1][j]`).
+     - If the item can be added, it checks the maximum value between:
+       - Taking the item (`val[i-1] + table[i-1][j-wt[i-1]]`).
+       - Not taking the item (`table[i-1][j]`).
+
+3. **Final Result**:
+   - After the table is filled, `table[n][W]` contains the maximum value that can be achieved with a knapsack of capacity `W` and `n` items.
+
+### **Example Walkthrough**:
+
+Apologies for the confusion earlier. Let's go through the steps carefully and explain the calculation more clearly. The goal is to understand the knapsack problem and how the solution should work.
+
+### Given:
+- **Values (val)**: `[50, 100, 150, 200]`
+- **Weights (wt)**: `[8, 16, 32, 40]`
+- **Knapsack Capacity (W)**: `64`
+
+### Objective:
+We need to find the maximum value that can be obtained by selecting items such that the total weight does not exceed the capacity (`64`).
+
+### **Dynamic Programming Approach**:
+
+We'll create a 2D table `table` where:
+- `table[i][w]` will represent the maximum value achievable using the first `i` items with a knapsack capacity of `w`.
+
+### Step-by-Step Table Construction:
+We start by initializing the `table` with all zeros.
+
+#### **Base Case**:
+- When there are no items (`i = 0`), the maximum value is `0` for any knapsack capacity.
+- When the knapsack capacity is `0` (`w = 0`), the maximum value is `0` regardless of the number of items.
+
+#### **Filling the Table**:
+For each item `i` (from `1` to `n`), and each capacity `w` (from `1` to `W`), we decide whether to include the current item in the knapsack or not based on its weight and the maximum value we can get.
+
+If we include item `i`, the total value is:
+- `val[i-1] + table[i-1][w - wt[i-1]]`.
+
+If we exclude item `i`, the total value is:
+- `table[i-1][w]`.
+
+So, we fill the table using the recurrence relation:
+
+\[
+\text{table}[i][w] = \max(\text{table}[i-1][w], \text{val}[i-1] + \text{table}[i-1][w-\text{wt}[i-1]])
+\]
+
+#### **Constructing the Table**:
+Let's break it down step by step:
+
+| Item/Capacity | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | ... | 64  |
+|---------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| **Item 0**    | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 50  | 50  | 50  | ... | 50  |
+| **Item 1**    | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 50  | 50  | 50  | ... | 150 |
+| **Item 2**    | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 50  | 50  | 50  | ... | 200 |
+| **Item 3**    | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 50  | 50  | 50  | ... | 350 |
+
+### Explanation of the Table:
+1. **Item 1** (`wt[0] = 8`, `val[0] = 50`):
+   - For knapsack capacities less than `8`, the item cannot be included.
+   - For capacities `8` or greater, we include the item and set `table[1][8] = 50`.
+
+2. **Item 2** (`wt[1] = 16`, `val[1] = 100`):
+   - For knapsack capacities less than `16`, we cannot include item 2.
+   - For capacities `16` or greater, we update the table based on whether including item 2 gives a better result than not including it.
+
+3. **Item 3** (`wt[2] = 32`, `val[2] = 150`):
+   - Similarly, we consider the effect of including item 3 for various capacities.
+
+4. **Item 4** (`wt[3] = 40`, `val[3] = 200`):
+   - Finally, we check if including item 4 improves the total value for the remaining capacities.
+
+### Final Output:
+
+After filling the table, we get the final result in `table[4][64]`, which represents the maximum value we can achieve with a knapsack capacity of `64`.
+
+#### **Answer**: The output is `350`, meaning the maximum value that can be carried in the knapsack with a capacity of `64` is `350`.
+
+
+
+### **Time Complexity**:
+- **Time Complexity**: \( O(n times W) \), where \( n \) is the number of items and \( W \) is the capacity of the knapsack.
+- This is because we are filling a table of size \( (n+1) times (W+1) \), and for each cell, we perform constant-time operations.
+
+### **Space Complexity**:
+- **Space Complexity**: \( O(n times W) \), for storing the DP table of size \( (n+1) times (W+1) \).
+
+This solution ensures that we consider all possible ways to include items, ensuring the maximum value without exceeding the knapsack's capacity.
+'''
+
+
+
+'''The **0/1 Knapsack Problem** is a classic optimization problem where you are given a set of items, each with a weight and a value, and a knapsack with a fixed weight capacity. The goal is to select a subset of items such that the total weight does not exceed the capacity of the knapsack, while maximizing the total value of the selected items.
+
+Key points:
+- **Items**: Each item has a weight and a value.
+- **Knapsack**: Has a limited weight capacity.
+- **Objective**: Maximize the total value of the items selected, without exceeding the capacity.
+
+### Constraints:
+- **0 or 1**: You can either include an item in the knapsack (1) or exclude it (0).
+
+### Example:
+If you have:
+- **Items**: 
+  - Item 1: weight = 2, value = 3
+  - Item 2: weight = 3, value = 4
+  - Item 3: weight = 4, value = 5
+- **Knapsack Capacity** = 5
+
+The task is to select items such that the total weight does not exceed 5, while maximizing the total value.
+
+### Solution Approach:
+This problem can be solved using **Dynamic Programming** or **Greedy Algorithms** (for fractional knapsack). In the **0/1 Knapsack**, **Dynamic Programming** is the most common and optimal approach.
+
+
+
+**Dynamic Programming (DP)** is a method used to solve complex problems by breaking them down into simpler subproblems. It involves solving each subproblem once and storing the results, avoiding the need to recompute answers to the same subproblems. This approach is particularly useful for optimization problems where the problem can be divided into overlapping subproblems with optimal substructure.
+
+'''
+
+
+'''### 1. **Can Knapsack be Done in Polynomial Time?**
+- **0/1 Knapsack Problem**: It is a **NP-complete problem**, which means there is no known algorithm that can solve it in **polynomial time** for all cases. The problem becomes computationally expensive as the number of items increases.
+- **Dynamic Programming Approach**: While it provides a **pseudo-polynomial time solution** (O(nW), where n is the number of items and W is the knapsack capacity), it does not work in polynomial time for all cases, especially when the capacity is large. It’s considered inefficient in terms of large inputs.
+- **Polynomial Time**: There is no known **polynomial-time algorithm** for solving the 0/1 Knapsack problem unless **P = NP**.
+
+### 2. **0-1 Knapsack Problem is NP-Complete**
+- The **0/1 Knapsack problem** is **NP-complete** because:
+  1. It is in NP: Given a solution (i.e., a set of items selected), you can verify it in polynomial time by calculating the total weight and profit.
+  2. It is NP-hard: It can be reduced to other NP-complete problems, meaning that solving 0/1 Knapsack is at least as hard as any other NP-complete problem.
+  
+  This implies that there is no known polynomial-time algorithm to solve the 0/1 knapsack problem for all cases unless **P = NP**.
+  '''

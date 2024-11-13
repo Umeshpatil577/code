@@ -1,0 +1,222 @@
+'''Write a program non-recursive and recursive program to calculate 
+Fibonacci numbers and analyze their time and space complexity.'''
+
+def recur(n):
+   if n <= 1:
+       return n
+   else:
+       return(recur(n-1) + recur(n-2))
+def iterative(n):
+    a = 0
+    b = 1
+    print(a)
+    print(b)
+    for i in range(2, n):
+        print(a + b)
+        a, b = b, a + b
+if __name__ == "__main__":
+    num = int(input("Enter the nth number for series: "))
+    if num <= 0:
+       print("Please enter a positive integer")
+    else:
+       print("Fibonacci sequence with recursion:")
+       for i in range(num):
+           print(recur(i))
+    print("Fibonacci series with Iteration:")
+    iterative(num)
+def recur(n):
+   if n <= 1:
+       return n
+   else:
+       return(recur(n-1) + recur(n-2))
+def iterative(n):
+    a = 0
+    b = 1
+    print(a)
+    print(b)
+    for i in range(2, n):
+        print(a + b)
+        a, b = b, a + b
+if __name__ == "__main__":
+    num = int(input("Enter the nth number for series: "))
+    if num <= 0:
+       print("Please enter a positive integer")
+    else:
+       print("Fibonacci sequence with recursion:")
+       for i in range(num):
+           print(recur(i))
+    print("Fibonacci series with Iteration:")
+    iterative(num)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+
+Code explaination:
+Here’s a simple breakdown of the code:
+
+### 1. **Recursive Fibonacci Function (`recur`)**
+   - This function `recur(n)` calculates the Fibonacci number at position `n` using recursion.
+   - **How it works**: 
+     - If `n` is 0 or 1 (base cases), it directly returns `n`.
+     - Otherwise, it calls itself twice: `recur(n-1) + recur(n-2)`.
+     - This continues until all recursive calls reach the base cases and return, allowing us to compute the Fibonacci number by summing up these results.
+   - **Drawback**: This approach is slow for large `n` due to repeated calculations.
+
+### 2. **Iterative Fibonacci Function (`iterative`)**
+   - This function calculates the Fibonacci sequence up to position `n` using a loop (no recursion).
+   - **How it works**:
+     - It starts with two numbers, `a = 0` and `b = 1`, which are the first two Fibonacci numbers.
+     - It then loops `n` times, printing each number in the sequence.
+     - In each iteration, it calculates the next Fibonacci number by summing `a` and `b`, then updates `a` to `b` and `b` to the new sum.
+   - **Advantage**: This approach is efficient, as it avoids redundant calculations and runs in linear time.
+
+### 3. **Main Execution**
+   - This part of the code prompts the user to enter an integer `num` for the Fibonacci sequence length.
+   - If `num` is greater than 0:
+     - It prints the Fibonacci sequence up to `num` using both the recursive (`recur`) and iterative (`iterative`) functions.
+     - It first prints the sequence using recursion, then prints the sequence using iteration for comparison.
+
+**Example**:
+If the user enters `5`, the output would be:
+```
+Fibonacci sequence with recursion:
+0
+1
+1
+2
+3
+
+Fibonacci series with Iteration:
+0
+1
+1
+2
+3
+``` 
+
+This prints the first 5 Fibonacci numbers (from `0` to the 4th position) using both approaches.
+
+
+### Analysis of Time and Space Complexity
+
+1. **Recursive Approach**:
+   - **Time Complexity**: (O(2^n)) because each function call branches into two more recursive calls, leading to an exponential number of calls.
+   - **Space Complexity**: (O(n)) due to the stack frames created by each recursive call.
+
+2. **Iterative Approach**:
+   - **Time Complexity**: (O(n)), as it only involves a single loop that runs (n) times.
+   - **Space Complexity**: (O(1)), because it uses only a fixed amount of space regardless of the input size.
+   
+
+The **recursive approach** calls the function repeatedly, creating a call stack that grows with each call, making it **inefficient (O(2^n) time)** and memory-intensive. It follows the mathematical definition but is slow for large `n`.
+Memory Usage	High (uses call stack)
+
+The **iterative approach** uses a loop to compute each Fibonacci number without extra function calls, making it **efficient (O(n) time)** with constant space **(O(1) memory)**. This method is faster and more memory-efficient for large `n`.
+Memory Usage		Low (no extra memory for call stack) 
+  
+
+  
+The **Fibonacci series** is a sequence of numbers where each number is the sum of the two preceding ones. The sequence starts with 0 and 1, and each subsequent number is calculated as:
+
+\[
+F(n) = F(n-1) + F(n-2)
+\]
+
+### Fibonacci Sequence
+The sequence starts like this:
+```
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...
+```
+
+### Explanation
+- **Starting Values**: The first two numbers are 0 and 1 by definition.
+- **Formula**: From the third term onward, each term is the sum of the previous two.
+  - For example:
+    - The 3rd number is \(0 + 1 = 1\)
+    - The 4th number is \(1 + 1 = 2\)
+    - The 5th number is \(1 + 2 = 3\)
+    - The 6th number is \(2 + 3 = 5\)
+    - And so on.
+
+### Properties
+- The Fibonacci sequence appears in many natural patterns, such as the branching of trees, arrangement of leaves, and the spiral patterns of shells.
+- It also has applications in computer algorithms, mathematics, art, and nature.
+
+
+
+
+
+
+
+
+
+1. **Recurrence Relation for Fibonacci**:
+   - The recurrence relation for the Fibonacci sequence is:
+     \[
+     F(n) = F(n-1) + F(n-2)
+     \]
+     with base cases:
+     \[
+     F(0) = 0, \quad F(1) = 1
+     \]
+   - **Solution**: Using this recurrence, we can calculate each term by summing the two previous terms, starting from the base cases.
+
+2. **Improvement of Iterative over Pure Recursive Computation**:
+   - The purely recursive approach recomputes Fibonacci numbers multiple times, resulting in an **exponential time complexity** \(O(2^n)\), which is inefficient.
+   - The **iterative approach** computes each Fibonacci number only once in a single loop, achieving a **linear time complexity** \(O(n)\) and constant space \(O(1)\), making it much faster and memory-efficient.
+
+3. **Optimized Techniques for Fibonacci Calculation**:
+   - **Dynamic Programming (Memoization)**: Stores previously computed values to avoid redundant calculations, achieving \(O(n)\) time complexity and \(O(n)\) space complexity.
+   - **Bottom-Up Dynamic Programming**: Uses an iterative approach with two variables to store intermediate values, resulting in \(O(n)\) time and \(O(1)\) space complexity.
+   - **Matrix Exponentiation**: Uses matrix multiplication to compute the nth Fibonacci number in **\(O(\log n)\) time** by exponentiating a transformation matrix.
+   - **Closed-Form (Binet's Formula)**: Uses a mathematical formula with powers and roots, computing \(F(n)\) in constant time \(O(1)\), though this may introduce floating-point errors for large `n`.
+   
+   
+   
+   
+   
+   
+   
+   
+1.  What is the Fibonacci Sequence of numbers? 
+The Fibonacci Sequence is a series where each number is the sum of the two 
+preceding ones, starting from 0 and 1 (e.g., 0, 1, 1, 2, 3, 5, 8...). 
+2.   
+How do the Fibonacci numbers work? 
+Each Fibonacci number is derived by adding the previous two numbers, following 
+the formula F(n)=F(n−1)+F(n−2) with F(0)=0F(0) = 0F(0)=0 and F(1)=1F(1) = 
+1F(1)=1. 
+3.   What is the Golden Ratio? 
+The Golden Ratio, approximately 1.618, is the limit of the ratio of consecutive 
+Fibonacci numbers, representing an ideal proportion in art, nature, and 
+architecture. 
+4. What is the Fibonacci Search technique? 
+Fibonacci Search is a search algorithm for sorted arrays, using Fibonacci numbers 
+to split the array, which reduces comparisons and is more efficient for larger 
+datasets. 
+5. What is the real application for Fibonacci series? 
+The Fibonacci series is used in algorithm design, financial modeling, biological 
+studies (like branching in trees and leaf arrangements), and computer data 
+structures. 
+   
+   '''

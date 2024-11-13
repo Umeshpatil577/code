@@ -1,0 +1,180 @@
+'''Design n-Queens matrix having first Queen placed. 
+Use backtracking to place remaining Queens to generate the final n-queen‘s matrix.'''
+global N
+N = 4
+def printSolution(board):
+    for i in range(N):
+        for j in range(N):
+            print(board[i][j], end=" ")
+        print()
+def isSafe(board, row, col):
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
+    for i, j in zip(range(row, -1, -1),
+                    range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+    for i, j in zip(range(row, N, 1),
+                    range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+    return True
+def solveNQUtil(board, col):
+    if col >= N:
+        return True
+    for i in range(N):
+        if isSafe(board, i, col):
+            board[i][col] = 1
+            if solveNQUtil(board, col + 1) == True:
+                return True
+            board[i][col] = 0
+    return False
+def solveNQ():
+    board = [[0, 0, 0, 0],
+             [0, 0, 0, 0],
+             [0, 0, 0, 0],
+             [0, 0, 0, 0]]
+    if solveNQUtil(board, 0) == False:
+        print("Solution does not exist")
+        return False
+    printSolution(board)
+    return True
+solveNQ()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''The provided code solves the **n-Queens problem** using **backtracking**. The n-Queens problem is about placing **n queens** on an **n×n chessboard** such that no two queens can attack each other. A queen can attack another queen if they are on the same row, column, or diagonal.
+
+### Key Steps and Explanation of the Code:
+
+1. **Global Variable `N`**:
+   - `N = 4`: This sets the size of the chessboard (4x4 in this case) and the number of queens to place.
+
+2. **`printSolution(board)`**:
+   - This function prints the chessboard (matrix) showing the positions of the queens. Each queen is represented by `1`, and empty spaces are represented by `0`.
+   - It loops through the board and prints each row.
+
+3. **`isSafe(board, row, col)`**:
+   - This function checks whether it is safe to place a queen at position `(row, col)`:
+     1. **Column Check**: The function checks if there is a queen already in the same column (`col`). It does this by checking all the previous rows in the current column (`board[row][i] == 1`).
+     2. **Diagonal Check** (Top-left to Bottom-right): It checks the diagonal from the top-left to bottom-right (`board[i][j] == 1`).
+     3. **Diagonal Check** (Bottom-left to Top-right): It checks the diagonal from bottom-left to top-right (`board[i][j] == 1`).
+   - If a queen can be placed safely at `(row, col)`, the function returns `True`, otherwise `False`.
+
+4. **`solveNQUtil(board, col)`**:
+   - This is the **recursive backtracking function** that attempts to place queens on the board:
+     1. **Base Case**: If `col >= N`, it means all queens have been placed successfully, so it returns `True`.
+     2. It tries to place a queen in every row of the current column (`col`). For each row, it checks if the position `(i, col)` is safe using the `isSafe()` function.
+     3. If it's safe to place the queen, it marks that position with `1` (`board[i][col] = 1`).
+     4. It then calls itself recursively to place queens in the next column (`col + 1`).
+     5. If placing a queen leads to a solution (the recursive call returns `True`), it stops and returns `True`.
+     6. If placing a queen does not lead to a solution, it **backtracks** by removing the queen (`board[i][col] = 0`) and tries the next row.
+   - If no position is found in the current column, it returns `False`.
+
+5. **`solveNQ()`**:
+   - This function initializes the board as a 4x4 matrix filled with `0`s (representing empty spaces).
+   - It calls `solveNQUtil(board, 0)` to start solving from the first column.
+   - If no solution is found (`solveNQUtil()` returns `False`), it prints "Solution does not exist."
+   - If a solution is found, it prints the board using `printSolution(board)`.
+
+### How Backtracking Works in This Code:
+
+- **Backtracking** is a technique where we build the solution incrementally. We try placing a queen in a column, then recursively try to place queens in the subsequent columns. If we reach a point where a queen cannot be safely placed, we "backtrack" by removing the last placed queen and trying another option.
+- In this case, the backtracking happens when `solveNQUtil` returns `False` after trying all rows for a given column. It undoes the last placement (`board[i][col] = 0`) and tries the next possibility.
+
+### Example Execution:
+
+For `N = 4`, the program will attempt to place queens in each column and backtrack if necessary. Here's how it works:
+1. Place the first queen in the first column (at row 0).
+2. Move to the second column and place the second queen in a row where it doesn't conflict with the first queen (row 1).
+3. Repeat for subsequent columns, backtracking when no safe placement is found.
+4. When a solution is found (all queens are placed safely), it prints the board.
+
+### Output:
+
+For `N = 4`, one of the possible solutions is:
+```
+0 1 0 0 
+0 0 0 1 
+1 0 0 0 
+0 0 1 0
+```
+
+This means:
+- Queen 1 is placed at (row 0, column 1).
+- Queen 2 is placed at (row 1, column 3).
+- Queen 3 is placed at (row 2, column 0).
+- Queen 4 is placed at (row 3, column 2).
+
+### Conclusion:
+
+- **Backtracking** is a powerful method to find solutions by exploring all possible placements and backtracking when a dead-end is reached.
+- The algorithm works for any value of `N`, and the solution is printed when a valid configuration of queens is found.
+'''
+
+
+
+
+
+'''Time Complexity: O(N!) due to the factorial number of recursive calls.
+Space Complexity: O(N^2) for storing the board.
+
+
+
+
+The **n-Queens problem** is a classic problem in computer science and artificial intelligence, where the goal is to place **n queens** on an **n×n chessboard** such that no two queens can attack each other. This means that no two queens should share the same row, column, or diagonal. The task is to find all possible arrangements or one valid arrangement of queens on the board.
+
+- **Input:** A single integer `n`, representing the size of the chessboard and the number of queens to be placed.
+- **Output:** A solution (or multiple solutions) where queens are placed on the board such that no two queens threaten each other.
+
+### Key Constraints:
+1. A queen can attack another queen if they are on the same row, column, or diagonal.
+2. The solution requires placing exactly one queen in each row and each column.
+
+### Example:
+For `n = 4`, one valid solution would look like this:
+```
+. Q . .
+. . . Q
+Q . . .
+. . Q .
+```
+Here, `Q` represents a queen, and `.` represents an empty space. In this arrangement, no queens can attack each other.
+'''

@@ -1,0 +1,231 @@
+import random
+import time
+
+def quick_sort_deterministic(arr, low, high):
+    if low < high:
+        pi = partition_deterministic(arr, low, high)
+        quick_sort_deterministic(arr, low, pi - 1)
+        quick_sort_deterministic(arr, pi + 1, high)
+
+def partition_deterministic(arr, low, high):
+    pivot = arr[high]  # Choosing the last element as the pivot
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def quick_sort_randomized(arr, low, high):
+    if low < high:
+        pi = partition_randomized(arr, low, high)
+        quick_sort_randomized(arr, low, pi - 1)
+        quick_sort_randomized(arr, pi + 1, high)
+
+def partition_randomized(arr, low, high):
+    pivot_index = random.randint(low, high)  # Choosing a random pivot
+    arr[pivot_index], arr[high] = arr[high], arr[pivot_index]
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def analyze_quick_sort(arr):
+    def measure_time(sort_func, arr):
+        arr_copy = arr.copy()
+        start_time = time.time()
+        sort_func(arr_copy, 0, len(arr_copy) - 1)
+        end_time = time.time()
+        return end_time - start_time
+
+    print("Array size:", len(arr))
+
+    deterministic_time = measure_time(quick_sort_deterministic, arr)
+    print(f"Deterministic Quick Sort Time: {deterministic_time:.6f} seconds")
+
+    randomized_time = measure_time(quick_sort_randomized, arr)
+    print(f"Randomized Quick Sort Time: {randomized_time:.6f} seconds")
+
+if __name__ == "__main__":
+    # Test cases with different array sizes
+    sizes = [100, 1000, 5000]
+
+    for size in sizes:
+        arr = [random.randint(0, 10000) for _ in range(size)]
+        print("\nTesting with array of size", size)
+        analyze_quick_sort(arr)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''### Explanation of the Code:
+
+---
+
+### **Functions:**
+
+#### 1. `quick_sort_deterministic(arr, low, high)`:
+   - This is the **deterministic version** of the Quick Sort algorithm.
+   - It always selects the **last element** of the array as the pivot.
+   - It recursively divides the array into smaller parts and sorts them.
+   - **Base case:** If the sub-array has one or no elements (`low >= high`), it doesn't do anything.
+
+#### 2. `partition_deterministic(arr, low, high)`:
+   - This is the partitioning function used by `quick_sort_deterministic`.
+   - It selects the **last element** as the pivot.
+   - It rearranges the array so that all elements smaller than the pivot go to the left and all elements larger go to the right.
+   - Finally, it places the pivot at its correct position and returns the index of the pivot.
+
+#### 3. `quick_sort_randomized(arr, low, high)`:
+   - This is the **randomized version** of the Quick Sort algorithm.
+   - It selects a **random pivot** from the array instead of always choosing the last element.
+   - The sorting and partitioning process is similar to deterministic Quick Sort, but the pivot selection is random.
+
+#### 4. `partition_randomized(arr, low, high)`:
+   - This function works similarly to `partition_deterministic`, but it first selects a random pivot from the array using `random.randint(low, high)`.
+   - It then swaps this random pivot with the last element and proceeds with the partitioning process as usual.
+
+#### 5. `analyze_quick_sort(arr)`:
+   - This function measures the performance (execution time) of both deterministic and randomized Quick Sort.
+   - It uses the helper function `measure_time` to measure the time it takes to sort the array.
+   - It prints the time taken by both sorting methods.
+   - `measure_time` works by copying the original array, calling the sorting function, and calculating how long the sorting took using `time.time()`.
+
+#### 6. `measure_time(sort_func, arr)`:
+   - This helper function accepts a sorting function (`sort_func`) and an array (`arr`).
+   - It measures the time taken by the sorting function to sort the array by checking the start and end times.
+
+#### 7. `main` block:
+   - It defines an array `sizes` containing different sizes of arrays (100, 1000, and 5000).
+   - For each size in `sizes`, it creates a random array of integers (between 0 and 10,000) and calls the `analyze_quick_sort` function to measure and print the sorting times for both deterministic and randomized Quick Sort.
+
+---
+
+### **Flow of the Program:**
+
+1. It defines an array with a random size (100, 1000, or 5000).
+2. The program then sorts the array using both deterministic and randomized versions of Quick Sort.
+3. The time taken to sort the array using each method is measured and printed.
+4. This process is repeated for each array size to compare the performance of both sorting algorithms.
+
+### **Key Concepts:**
+
+- **Deterministic Quick Sort:** Always picks the last element as the pivot.
+- **Randomized Quick Sort:** Randomly selects a pivot from the array, which can potentially reduce the chance of encountering worst-case scenarios.
+- **Partitioning:** Both versions partition the array into two parts based on the pivot and sort recursively.
+- **Time Measurement:** The code measures how long it takes for each sorting method to sort the array, providing an idea of which method performs better with different array sizes.
+
+'''
+
+
+
+
+'''### **Time and Space Complexity:**
+
+- **Time Complexity:**
+  - **Best/Average Case:** O(n log n) for both deterministic and randomized Quick Sort.
+  - **Worst Case:** O(n²) for deterministic Quick Sort (when the pivot is poorly chosen), but O(n log n) on average for randomized Quick Sort due to random pivot selection.
+  
+- **Space Complexity:** O(log n) due to the recursion stack, assuming in-place partitioning is used.
+
+
+
+
+
+### **Quick Sort Explanation:**
+
+Quick Sort is a **divide-and-conquer** sorting algorithm that works by choosing a **pivot element** and partitioning the array into two sub-arrays. It then recursively sorts these sub-arrays.
+
+---
+
+### **Deterministic Quick Sort:**
+
+- **Pivot Selection:** In deterministic Quick Sort, the **last element** of the array is always chosen as the pivot.
+- **Partitioning:** The array is rearranged such that elements smaller than the pivot are on the left, and elements larger are on the right.
+- **Recursion:** After partitioning, the algorithm recursively sorts the left and right sub-arrays.
+
+#### **Time Complexity:**
+- **Best/Average Case:** O(n log n)
+- **Worst Case:** O(n²) (when the pivot is always the smallest or largest element, such as when the array is already sorted)
+
+---
+
+### **Randomized Quick Sort:**
+
+- **Pivot Selection:** In randomized Quick Sort, a **random element** is selected as the pivot instead of always choosing the last element.
+- **Partitioning:** The process is the same as deterministic Quick Sort, but it uses a random pivot for partitioning.
+- **Recursion:** Like deterministic Quick Sort, it recursively sorts the left and right sub-arrays.
+
+#### **Time Complexity:**
+- **Best/Average Case:** O(n log n)
+- **Worst Case:** O(n log n) (the randomness of pivot selection reduces the likelihood of encountering the worst-case scenario)
+
+### **Key Difference:**
+- **Deterministic Quick Sort** always uses a fixed pivot (like the last element).
+- **Randomized Quick Sort** selects a random pivot, making it more robust against worst-case scenarios.
+
+
+
+
+### **Advantages of Quick Sort:**
+
+1. **Efficient on Average:**  
+   - **Average case time complexity** is O(n log n), making it faster than algorithms like Bubble Sort (O(n²)) and Selection Sort (O(n²)).
+
+2. **In-place Sorting:**  
+   - Quick Sort doesn't require additional memory for storing the sorted array, as it sorts the array **in place**, unlike Merge Sort which requires extra space (O(n)).
+
+3. **Cache Friendly:**  
+   - Quick Sort works well with modern computer architectures because it tends to make fewer cache misses due to its local data access patterns.
+
+4. **Randomized Quick Sort Reduces Worst-Case Risk:**  
+   - By randomly selecting a pivot, **Randomized Quick Sort** reduces the likelihood of hitting the worst-case time complexity (O(n²)), improving performance over deterministic Quick Sort on average.
+
+5. **Good for Large Data Sets:**  
+   - Quick Sort is often preferred for large data sets because of its **average-case efficiency** and **in-place sorting** characteristics.
+
+---
+
+### **Comparison of Deterministic vs. Randomized Quick Sort:**
+
+- **Deterministic Quick Sort:**
+  - Faster on average, but can degrade to O(n²) if the pivot selection is poor (e.g., already sorted data).
+  
+- **Randomized Quick Sort:**
+  - More **robust** against worst-case performance by reducing the chances of consistently bad pivot selection. 
+
+
+'''

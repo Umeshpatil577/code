@@ -1,0 +1,132 @@
+def fractional_knapsack(value, weight, capacity):
+    
+    # index = [0, 1, 2, ..., n - 1] for n items
+    index = list(range(len(value)))
+    # contains ratios of values to weight
+    ratio = [v/w for v, w in zip(value, weight)]
+    # index is sorted according to value-to-weight ratio in decreasing order
+    index.sort(key=lambda i: ratio[i], reverse=True)
+ 
+    max_value = 0
+    fractions = [0]*len(value)
+    for i in index:
+        if weight[i] <= capacity:
+            fractions[i] = 1
+            max_value += value[i]
+            capacity -= weight[i]
+        else:
+            fractions[i] = capacity/weight[i]
+            max_value += value[i]*capacity/weight[i]
+            break
+ 
+    return max_value, fractions
+ 
+ 
+n = int(input('Enter number of items: '))
+value = input('Enter the values of the {} item(s) in order: '
+              .format(n)).split()
+value = [int(v) for v in value]
+weight = input('Enter the positive weights of the {} item(s) in order: '
+               .format(n)).split()
+weight = [int(w) for w in weight]
+capacity = int(input('Enter maximum weight: '))
+ 
+max_value, fractions = fractional_knapsack(value, weight, capacity)
+print('The maximum value of items that can be carried:', max_value)
+print('The fractions in which the items should be taken:', fractions)
+
+
+
+'''Enter number of items: 3
+Enter the values of the 3 item(s) in order: 60 100 120
+Enter the positive weights of the 3 item(s) in order: 10 20 30
+Enter maximum weight: 50
+The maximum value of items that can be carried: 240.0
+The fractions in which the items should be taken: [1, 1, 0.6666666666666666]
+'''
+
+
+
+
+'''
+
+### **Example Walkthrough**:
+
+- Suppose we have 3 items with the following values, weights, and knapsack capacity:
+
+   - **Values**: 60, 100, 120
+   - **Weights**: 10, 20, 30
+   - **Capacity**: 50
+
+#### Step 1: Calculate the value-to-weight ratios:
+   - Item 1: 60/10 = 6
+   - Item 2: 100/20 = 5
+   - Item 3: 120/30 = 4
+
+#### Step 2: Sort items based on the value-to-weight ratio:
+   Sorted order based on ratios: Item 1 (6), Item 2 (5), Item 3 (4)
+
+#### Step 3: Take items:
+   - Take **full Item 1** (weight 10, value 60). Remaining capacity = 50 - 10 = 40.
+   - Take **full Item 2** (weight 20, value 100). Remaining capacity = 40 - 20 = 20.
+   - Take **partial Item 3**. Item 3 has weight 30, but only 20 capacity is left. So, take \( \frac{20}{30} \) of Item 3, which is approximately 0.67 of the item. Value of taken part: \( 0.67 \times 120 = 80 \).
+
+#### Step 4: Calculate the total value:
+   - Total value = 60 + 100 + 80 = 240.
+
+#### Step 5: Output the fractions and the maximum value.
+
+'''
+
+
+
+
+
+
+
+'''Time Complexity: 𝑂(𝑛log⁡𝑛)
+Space Complexity: O(n)
+### **Knapsack Problem (in short)**:
+The **Knapsack Problem** is a classic optimization problem where the goal is to fill a "knapsack" with items such that the total value is maximized, but the total weight does not exceed a given capacity.
+The Greedy algorithm is often used to solve the fractional knapsack, where you select items based on their value-to-weight ratio (i.e., how valuable they are per unit weight).
+### **Types of Knapsack Problems**:
+1. **0/1 Knapsack**: Each item can either be taken fully or not taken at all. The challenge is to choose which items to take to maximize the total value without exceeding the capacity.
+   
+2. **Fractional Knapsack**: Items can be broken into fractions. You can take any fraction of an item. The challenge is to take the most valuable items per unit weight.
+
+
+'''
+
+
+
+
+
+'''### 1. **Knapsack Problem using Branch and Bound**:
+Branch and Bound (B&B) is an optimization technique for solving problems like the **0/1 Knapsack Problem**.
+
+- **Branching**: Split the problem into smaller subproblems. For the knapsack, you decide whether to include an item or not.
+- **Bounding**: Use upper and lower bounds to eliminate subproblems that cannot lead to a better solution.
+- **Example**:
+  - Items: `[(Profit, Weight)] = [(60, 10), (100, 20), (120, 30)]`
+  - Knapsack capacity: `50`
+  
+  **Steps**:
+  1. Start by considering the entire set of items. Calculate the upper bound (e.g., greedy solution) and lower bound (e.g., based on the remaining capacity).
+  2. Branch by including or excluding an item and calculate the bounds for each subproblem.
+  3. Use the bounds to prune branches that cannot yield better solutions.
+  4. Repeat until all possible branches are explored, keeping track of the best solution found.
+
+### 2. **Time Complexity of Greedy Knapsack (Sorted Items)**:
+When the objects are already sorted in **descending order of profit-to-weight ratio**, the greedy algorithm performs the following steps:
+- Select the items in sorted order until the knapsack is full.
+- **Time Complexity**: O(n), where n is the number of items.
+  - Sorting step is not needed since the items are already sorted.
+
+### 3. **Why Greedy Approach is not Optimal for 0-1 Knapsack**:
+- The greedy approach **does not always lead to the optimal solution** for the 0-1 knapsack problem because it makes locally optimal choices (selecting the item with the highest profit-to-weight ratio) without considering the overall best combination.
+- **Counterexample**: 
+  - Items: `[(Profit, Weight)] = [(60, 10), (100, 20), (120, 30)]`
+  - Knapsack capacity: `50`
+  
+  Greedy would select the first two items `(60,10)` and `(100,20)` with a total profit of `160`. However, the optimal solution is to select the second and third items, yielding a total profit of `220`.
+  '''

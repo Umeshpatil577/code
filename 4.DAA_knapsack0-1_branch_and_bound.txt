@@ -1,0 +1,302 @@
+from queue import PriorityQueue
+
+class Item:
+    def __init__(self, weight, value):
+        self.weight = weight
+        self.value = value
+
+class Node:
+    def __init__(self, level, profit, weight):
+        self.level = level      # Level of the node in the decision tree (or index in arr[])
+        self.profit = profit    # Profit of nodes on the path from root to this node (including this node)
+        self.weight = weight    # Total weight at the node
+
+    def __lt__(self, other):
+        return other.weight < self.weight  # Compare based on weight in descending order
+
+def bound(u, n, W, arr):
+    # Calculate the upper bound of profit for a node in the search tree
+    if u.weight >= W:
+        return 0
+
+    profit_bound = u.profit
+    j = u.level + 1
+    total_weight = u.weight
+
+    # Greedily add items to the knapsack until the weight limit is reached
+    while j < n and total_weight + arr[j].weight <= W:
+        total_weight += arr[j].weight
+        profit_bound += arr[j].value
+        j += 1
+
+    # If there are still items left, calculate the fractional contribution of the next item
+    if j < n:
+        profit_bound += int((W - total_weight) * arr[j].value / arr[j].weight)
+
+    return profit_bound
+
+def knapsack(W, arr, n):
+    # Sort items based on value-to-weight ratio in non-ascending order
+    arr.sort(key=lambda x: x.value / x.weight, reverse=True)
+    
+    priority_queue = PriorityQueue()
+    u = Node(-1, 0, 0)  # Dummy node at the starting
+    priority_queue.put(u)
+
+    max_profit = 0
+
+    while not priority_queue.empty():
+        u = priority_queue.get()
+
+        if u.level == -1:
+            v = Node(0, 0, 0)  # Starting node
+        elif u.level == n - 1:
+            continue  # Skip if it is the last level (no more items to consider)
+        else:
+            v = Node(u.level + 1, u.profit, u.weight)  # Node without considering the next item
+
+        v.weight += arr[v.level].weight
+        v.profit += arr[v.level].value
+
+        # If the cumulated weight is less than or equal to W and profit is greater than previous profit, update maxProfit
+        if v.weight <= W and v.profit > max_profit:
+            max_profit = v.profit
+
+        v_bound = bound(v, n, W, arr)
+        # If the bound value is greater than current maxProfit, add the node to the priority queue for further consideration
+        if v_bound > max_profit:
+            priority_queue.put(v)
+
+        # Node considering the next item without adding it to the knapsack
+        v = Node(u.level + 1, u.profit, u.weight)
+        v_bound = bound(v, n, W, arr)
+        # If the bound value is greater than current maxProfit, add the node to the priority queue for further consideration
+        if v_bound > max_profit:
+            priority_queue.put(v)
+
+    return max_profit
+
+# Driver program to test the above function
+W = 10
+arr = [
+    Item(2, 40),
+    Item(3.14, 50),
+    Item(1.98, 100),
+    Item(5, 95),
+    Item(3, 30)
+]
+n = len(arr)
+
+max_profit = knapsack(W, arr, n)
+print("Maximum possible profit =", max_profit)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+### 1. **Item Class**:
+This class represents an item that will be placed in the knapsack, with a specified weight and value.
+
+
+### 2. **Node Class**:
+Each **Node** represents a decision point in the tree of possible solutions. It keeps track of:
+   - `level`: The index of the item currently being considered (or -1 for the root node).
+   - `profit`: The total profit accumulated from selecting items up to this point.
+   - `weight`: The total weight of the items selected so far.
+
+
+
+### 3. **Bound Function**:
+This function estimates the maximum possible profit that can be obtained from a given node. It is used to decide whether to further explore a node or prune it.
+
+- If the total weight of the node exceeds the knapsack capacity `W`, it returns 0 (i.e., no further exploration is needed).
+- Otherwise, it calculates the maximum possible profit (including the current node) by greedily adding items until the weight exceeds the knapsack's capacity. If items remain, it estimates the fractional contribution of the next item.
+
+
+
+### 4. **Knapsack Function**:
+This is the main function that implements the **Branch and Bound** approach to solving the knapsack problem. The goal is to explore all possible solutions but in an optimized way by pruning suboptimal paths based on their bounds.
+
+#### Key Steps:
+1. **Sort Items**: The items are sorted by their value-to-weight ratio in descending order. This helps prioritize the items that provide the most value per unit weight.
+   
+
+3. **Initialize Root Node**: The algorithm starts with a root node that represents the decision before considering any items
+
+4. **Process Nodes**:
+   - The algorithm processes each node from the priority queue, considering both the inclusion and exclusion of the next item.
+   - For each node, it computes the possible next step by either including the item at the current level (`v.weight += arr[v.level].weight` and `v.profit += arr[v.level].value`) or excluding it.
+   - If the weight of the current node exceeds the knapsack capacity `W`, it’s not further considered.
+   - The algorithm updates `max_profit` whenever a node with higher profit is found.
+
+   If the bound of the current node exceeds the `max_profit`, that node is added back to the priority queue to explore further.
+   
+       
+
+### 5. **Driver Code**:
+Here, the knapsack problem is solved by calling the `knapsack` function. We define a set of items (with `weight` and `value`), and the knapsack capacity `W`. The `knapsack` function is called to find the maximum profit.
+
+
+---
+
+### Summary:
+- The code solves the **0/1 Knapsack Problem** using **Branch and Bound**.
+- **Item** class defines the properties of each item (weight and value).
+- **Node** class tracks the state of the decision process (including/excluding items).
+- **Bound function** estimates the maximum potential profit for a node.
+- **Knapsack function** uses a priority queue and explores the best possible paths efficiently.
+'''
+
+
+
+
+
+'''Let's break down how the **Branch and Bound approach** works to solve the knapsack problem with the given input and arrive at the result **235**.
+
+### Problem Definition:
+- We are given a **knapsack capacity** `W = 10`.
+- We are given a list of **items** with their `weight` and `value`:
+  - Item 1: weight = 2, value = 40
+  - Item 2: weight = 3.14, value = 50
+  - Item 3: weight = 1.98, value = 100
+  - Item 4: weight = 5, value = 95
+  - Item 5: weight = 3, value = 30
+
+The goal is to find the **maximum profit** that can be obtained by including items in the knapsack, without exceeding the weight limit.
+
+### Step-by-Step Explanation:
+
+1. **Sorting the Items**:  
+   The algorithm starts by sorting the items based on the **value-to-weight ratio** in **descending order**:
+   - Item 1: `value/weight = 40/2 = 20`
+   - Item 2: `value/weight = 50/3.14 ≈ 15.92`
+   - Item 3: `value/weight = 100/1.98 ≈ 50.51`
+   - Item 4: `value/weight = 95/5 = 19`
+   - Item 5: `value/weight = 30/3 = 10`
+
+   After sorting based on the value-to-weight ratio, the order of items is:
+   - Item 3 (highest value-to-weight ratio)
+   - Item 1
+   - Item 4
+   - Item 2
+   - Item 5
+
+2. **Starting Node (Level = -1)**:
+   The algorithm starts with an initial **dummy node** at level `-1`, which represents the state before considering any item. The initial profit is `0`, and the initial weight is `0`.
+
+3. **Exploration**:
+   The algorithm uses a **priority queue** to explore the decision tree and compute the maximum profit. It explores nodes in the order of the potential profit that could be obtained by including or excluding items.
+
+4. **First Exploration (Item 3)**:
+   - The first item to be considered is **Item 3** (weight = 1.98, value = 100).
+   - Including Item 3:
+     - Total weight = `1.98` (which is <= 10, so it can be included).
+     - Total profit = `100`.
+   - **Maximum profit** so far = `100`.
+   - The **upper bound** (calculated by the `bound` function) indicates that including more items can potentially lead to higher profit, so the node is added to the priority queue.
+
+5. **Second Exploration (Item 1)**:
+   - After considering Item 3, the next item considered is **Item 1** (weight = 2, value = 40).
+   - Including Item 1:
+     - Total weight = `1.98 + 2 = 3.98` (which is still <= 10, so it can be included).
+     - Total profit = `100 + 40 = 140`.
+   - **Maximum profit** so far = `140`.
+   - The **upper bound** indicates that further exploration might increase the profit, so the node is added to the priority queue.
+
+6. **Third Exploration (Item 4)**:
+   - Next, the algorithm considers **Item 4** (weight = 5, value = 95).
+   - Including Item 4:
+     - Total weight = `3.98 + 5 = 8.98` (which is <= 10, so it can be included).
+     - Total profit = `140 + 95 = 235`.
+   - **Maximum profit** so far = `235`.
+
+7. **Stopping Condition**:
+   - After considering Item 4, the total weight becomes `8.98`, which is still less than the capacity (`W = 10`), and including Item 4 leads to a **maximum profit of 235**. 
+   - Further exploration of additional items will not increase the profit as the remaining items will either exceed the weight or not improve the profit.
+
+### Final Answer:
+- The maximum profit achievable, considering the best combination of items, is **235**. This happens by selecting **Item 3**, **Item 1**, and **Item 4**.
+
+### Key Insights:
+- **Branch and Bound** prunes suboptimal paths based on the upper bound of possible profits, thus efficiently exploring the decision tree.
+- Sorting items based on the value-to-weight ratio helps prioritize the most profitable items first.
+- The algorithm stops exploring nodes once it finds the best possible combination (in this case, profit = 235).
+'''
+
+
+
+
+
+
+'''
+- **Time Complexity**: \(O(2^n . n)\) (worst-case scenario)
+- **Space Complexity**: \(O(2^n)\)
+
+
+
+
+
+
+**Branch and Bound** is a general algorithm design technique used to solve optimization problems, including combinatorial problems like the knapsack problem. It systematically explores all possible solutions by breaking the problem into smaller subproblems, "branching" out from a current state, and "bounding" the possible solutions to eliminate paths that cannot lead to an optimal solution. Here’s a simplified breakdown:
+
+### Key Components:
+1. **Branching**:  
+   - The algorithm splits the problem into smaller subproblems (branches). For example, in the knapsack problem, at each step, we decide whether to include an item in the knapsack or not, creating two branches: one with the item and one without.
+   
+2. **Bounding**:  
+   - For each subproblem (node), we calculate a **bound**, which is an estimate of the best possible solution that can be achieved from that subproblem. 
+   - The bound is used to compare different branches. If a branch’s bound is less than the current best solution, that branch is discarded (pruned). This reduces the number of subproblems to explore, making the algorithm more efficient.
+
+3. **Selection**:  
+   - A **priority queue** or **best-first search** is used to select the next subproblem to explore based on the highest bound, i.e., the most promising node is explored first.
+
+4. **Pruning**:  
+   - If a subproblem’s bound is worse than the current best solution, that branch is "pruned" (discarded), meaning it won't be explored further. This reduces the number of solutions to evaluate.
+
+### Steps:
+1. Start with the initial problem.
+2. **Branch** by splitting the problem into subproblems.
+3. **Bound** each subproblem to calculate its potential.
+4. **Prune** any subproblems that can't lead to a better solution.
+5. Repeat the process until the optimal solution is found or all branches have been explored.
+
+### Example (Knapsack Problem):
+- For each item, we can either include it in the knapsack or exclude it.
+- We calculate the possible maximum value (upper bound) for each branch.
+- If the value of a branch is already less than the best solution found so far, we prune it.
+- This process continues until all possible solutions have been considered, and we find the maximum profit.
+
+    '''
+
+'''### 1. **Can Knapsack be Done in Polynomial Time?**
+- **0/1 Knapsack Problem**: It is a **NP-complete problem**, which means there is no known algorithm that can solve it in **polynomial time** for all cases. The problem becomes computationally expensive as the number of items increases.
+- **Dynamic Programming Approach**: While it provides a **pseudo-polynomial time solution** (O(nW), where n is the number of items and W is the knapsack capacity), it does not work in polynomial time for all cases, especially when the capacity is large. It’s considered inefficient in terms of large inputs.
+- **Polynomial Time**: There is no known **polynomial-time algorithm** for solving the 0/1 Knapsack problem unless **P = NP**.
+
+### 2. **0-1 Knapsack Problem is NP-Complete**
+- The **0/1 Knapsack problem** is **NP-complete** because:
+  1. It is in NP: Given a solution (i.e., a set of items selected), you can verify it in polynomial time by calculating the total weight and profit.
+  2. It is NP-hard: It can be reduced to other NP-complete problems, meaning that solving 0/1 Knapsack is at least as hard as any other NP-complete problem.
+  
+  This implies that there is no known polynomial-time algorithm to solve the 0/1 knapsack problem for all cases unless **P = NP**.
+'''
